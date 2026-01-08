@@ -143,7 +143,7 @@ footer {
 <div class="container">
     <div class="card">
 
-        <h1>Innomatics Research Labs 🤖</h1>
+        <h1>Name Styler – Flask Application 🤖</h1>
         <div class="subtitle">Enter your name & see magic</div>
 
         <form method="GET">
