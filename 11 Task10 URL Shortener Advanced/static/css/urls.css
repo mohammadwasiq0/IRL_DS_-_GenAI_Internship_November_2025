@@ -1,0 +1,128 @@
+/* =====================
+   PAGE LAYOUT
+===================== */
+.page-wrapper {
+    max-width: 1200px;
+    margin: 60px auto;
+    padding: 0 20px;
+}
+
+.page-header {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 30px;
+}
+
+.page-header h1 {
+    font-size: 2.2rem;
+}
+
+.page-header p {
+    font-size: 0.95rem;
+    opacity: 0.8;
+    max-width: 500px;
+}
+
+.page-header .btn-primary {
+    align-self: flex-start;
+    margin-top: 10px;
+}
+
+/* =====================
+   GLASS CARD
+===================== */
+.glass {
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(16px);
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08);
+}
+
+/* =====================
+   TABLE
+===================== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background: rgba(255,255,255,0.06);
+}
+
+th, td {
+    padding: 14px;
+    text-align: left;
+    font-size: 0.9rem;
+}
+
+th {
+    font-weight: 600;
+    opacity: 0.85;
+}
+
+tbody tr {
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+tbody tr:hover {
+    background: rgba(255,255,255,0.05);
+}
+
+/* =====================
+   URL STYLES
+===================== */
+.short-link {
+    color: #00f2fe;
+    text-decoration: none;
+}
+
+.short-link:hover {
+    text-decoration: underline;
+}
+
+.truncate {
+    max-width: 450px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* =====================
+   BUTTONS
+===================== */
+.copy-btn {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.4);
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: 0.3s ease;
+}
+
+.copy-btn:hover {
+    background: rgba(255,255,255,0.15);
+}
+
+/* =====================
+   EMPTY STATE
+===================== */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.empty-state h3 {
+    font-size: 1.6rem;
+    margin-bottom: 10px;
+}
+
+.empty-state p {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin-bottom: 20px;
+}

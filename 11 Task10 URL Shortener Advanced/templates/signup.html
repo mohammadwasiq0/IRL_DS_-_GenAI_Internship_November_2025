@@ -1,0 +1,70 @@
+{% extends 'layout.html' %}
+{% block title %}Create Account | URL Shortener{% endblock %}
+
+{% block body %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/signup.css') }}">
+
+<section class="auth-wrapper">
+    <div class="auth-container">
+
+        <!-- LEFT BRAND PANEL -->
+        <div class="auth-left">
+            <div class="brand-box">
+                <h1>Create<span>Account</span></h1>
+                <p class="tagline">
+                    Join a secure & intelligent URL management platform
+                </p>
+
+                <ul class="benefits">
+                    <li>🚀 Shorten URLs instantly</li>
+                    <li>📈 Track clicks & analytics</li>
+                    <li>🔐 Secure account protection</li>
+                    <li>⚙️ Personal dashboard</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- RIGHT SIGNUP CARD -->
+        <div class="auth-right">
+            <div class="signup-card glass">
+
+                <h2>Sign Up</h2>
+                <p class="sub-text">Create your account in seconds</p>
+
+                {% if error %}
+                    <div class="error-box">{{ error }}</div>
+                {% endif %}
+
+                <form method="POST" action="/signup">
+
+                    <div class="input-group">
+                        <input type="text" name="username" minlength="5" maxlength="9" required>
+                        <label>Username</label>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="password" name="password" minlength="8" maxlength="16" required>
+                        <label>Password</label>
+                    </div>
+
+                    <button type="submit" class="btn-primary full">
+                        Create Account
+                    </button>
+                </form>
+
+                <div class="divider">
+                    <span>Already registered?</span>
+                </div>
+
+                <a href="/login" class="btn-outline full">
+                    Back to Login
+                </a>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

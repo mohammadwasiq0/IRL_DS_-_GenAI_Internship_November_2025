@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %} | URL Shortener</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Global Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+<!-- ================= NAVBAR ================= -->
+<header class="navbar">
+    <div class="nav-container">
+        <a href="/" class="brand">
+            <i class="fa-solid fa-link"></i>
+            <span>URL<span class="accent">Short</span></span>
+        </a>
+
+        <nav class="nav-links">
+            {% if 'username' in session %}
+                <span class="user-pill">
+                    <i class="fa-solid fa-user"></i> {{ session['username'] }}
+                </span>
+                <a href="/dashboard">Dashboard</a>
+                <a href="/logout" class="btn-nav">Logout</a>
+            {% else %}
+                <a href="/">Home</a>
+                <a href="/login">Login</a>
+                <a href="/signup" class="btn-nav">Sign Up</a>
+            {% endif %}
+        </nav>
+    </div>
+</header>
+
+<!-- ================= FLASH MESSAGES ================= -->
+{% if messages %}
+    <div class="flash-wrapper">
+        {% for message in messages %}
+            <div class="flash {{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<!-- ================= PAGE CONTENT ================= -->
+<main>
+    {% block body %}{% endblock %}
+</main>
+
+<!-- ================= FOOTER ================= -->
+<footer class="footer">
+    <p>
+        © {{ 2026 }} URL Shortener • Built by <strong>Mohammad Wasiq</strong>
+    </p>
+</footer>
+
+</body>
+</html>

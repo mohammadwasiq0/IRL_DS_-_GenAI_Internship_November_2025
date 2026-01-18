@@ -1,0 +1,66 @@
+{% extends 'layout.html' %}
+{% block title %}My URLs{% endblock %}
+
+{% block body %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/urls.css') }}">
+
+<section class="page-wrapper">
+
+    <div class="page-header">
+        <h1>🔗 Your Shortened URLs</h1>
+        <p>Manage and reuse your previously created links</p>
+        <a href="{{ url_for('shortener') }}" class="btn-primary">
+            + Shorten New URL
+        </a>
+    </div>
+
+    <div class="table-card glass">
+        {% if urls %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Original URL</th>
+                        <th>Short URL</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for url in urls %}
+                    <tr>
+                        <td class="truncate">{{ url.original_url }}</td>
+                        <td>
+                            <a href="{{ url.short_url }}" target="_blank" class="short-link">
+                                {{ url.short_url }}
+                            </a>
+                        </td>
+                        <td>
+                            <button class="copy-btn" onclick="copyToClipboard('{{ url.short_url }}')">
+                                Copy
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="empty-state">
+                <h3>No URLs yet 🚀</h3>
+                <p>Start by creating your first shortened link.</p>
+                <a href="{{ url_for('shortener') }}" class="btn-primary">
+                    Shorten URL
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+</section>
+
+<script>
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text);
+    alert("Short URL copied to clipboard!");
+}
+</script>
+
+{% endblock %}

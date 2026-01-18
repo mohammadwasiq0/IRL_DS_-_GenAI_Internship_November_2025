@@ -1,0 +1,88 @@
+{% extends 'layout.html' %}
+{% block title %}Dashboard{% endblock %}
+
+{% block body %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+<section class="dashboard-wrapper">
+
+    <!-- ===== DASHBOARD HEADER ===== -->
+    <div class="dashboard-header">
+        <div>
+            <h1>🚀 URL Shortener Dashboard</h1>
+            <p>Create, manage and track your shortened URLs</p>
+        </div>
+
+        <a href="{{ url_for('urls') }}" class="btn-outline">
+            View All URLs
+        </a>
+    </div>
+
+    <!-- ===== STATS (future ready) ===== -->
+    <div class="stats-grid">
+        <div class="stat-card glass">
+            <h3>Total URLs</h3>
+            <p>{{ total_urls if total_urls is defined else "—" }}</p>
+        </div>
+        <div class="stat-card glass">
+            <h3>Clicks</h3>
+            <p>—</p>
+        </div>
+        <div class="stat-card glass">
+            <h3>Status</h3>
+            <p>Active</p>
+        </div>
+    </div>
+
+    <!-- ===== SHORTENER CARD ===== -->
+    <div class="shortener-card glass">
+        <h2>Shorten a New URL</h2>
+
+        <form method="POST" action="{{ url_for('shortener') }}">
+            <div class="input-group">
+                <input
+                    type="url"
+                    name="original_url"
+                    required
+                    placeholder="https://example.com/very/long/url"
+                >
+            </div>
+
+            <button type="submit" class="btn-primary">
+                Generate Short URL
+            </button>
+        </form>
+
+        {% if short_url %}
+        <div class="result-box">
+            <span>Your Short URL</span>
+            <div class="result-row">
+                <input type="text" id="short-url" value="{{ short_url }}" readonly>
+                <button onclick="copyToClipboard()">Copy</button>
+            </div>
+            <small id="copy-msg"></small>
+        </div>
+        {% endif %}
+    </div>
+
+</section>
+
+<script>
+function copyToClipboard() {
+    const input = document.getElementById("short-url");
+    input.select();
+    input.setSelectionRange(0, 99999);
+    document.execCommand("copy");
+
+    const msg = document.getElementById("copy-msg");
+    msg.innerText = "Copied to clipboard ✔";
+    msg.style.opacity = "1";
+
+    setTimeout(() => {
+        msg.style.opacity = "0";
+    }, 2000);
+}
+</script>
+
+{% endblock %}
