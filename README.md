@@ -1,294 +1,405 @@
-# Sentiment Intelligence with MLflow
+# 🚀 Production-Ready GenAI Career Advisor Chatbot
 
-**Enterprise-grade sentiment analysis platform with full MLflow integration for experiment tracking, hyperparameter tuning, model registry, and production deployment.**
+## 📌 Project Title
 
-## 🎯 Features
+**Building a Production-Ready Domain-Specific Chatbot using Euriai LLM API**
 
-| Feature | Status | Description |
-|---------|--------|-------------|
-| 🔮 Real-time Prediction | ✅ Complete | Single/batch sentiment analysis |
-| 📊 Model Insights | ✅ Complete | Feature importance, distributions |
-| 🗃 Dataset Explorer | ✅ Complete | Interactive data visualization |
-| 📈 MLflow Tracking | ✅ Complete | Params, metrics, artifacts logging |
-| 🔧 Hyperparameter Tuning | ✅ Complete | Grid search with MLflow plots |
-| 🏷️ Model Registry | ✅ Complete | Register + tag production models |
-| 🚀 Streamlit Dashboard | ✅ Complete | Responsive web interface |
+---
 
-## 📋 Table of Contents
-- [High-Level Design (HLD)](#hld)
-- [Low-Level Design (LLD)](#lld)
-- [Quick Start](#quick-start)
-- [Architecture](#architecture)
-- [MLflow Integration](#mlflow-integration)
-- [API Endpoints](#api-endpoints)
-- [Project Structure](#project-structure)
-- [Configuration](#configuration)
-- [Performance](#performance)
-- [Troubleshooting](#troubleshooting)
+# 🧠 Project Overview
 
-## HLD (High-Level Design)
+This project implements a **production-ready, domain-specific AI chatbot** built with:
+
+* Streamlit (Interactive UI)
+* Euriai LLM API (gpt-4.1-nano model)
+* SQLite (Persistent storage)
+* Argon2 (Secure authentication)
+* Modular backend architecture
+* Logging & error handling
+* Long-term conversation memory
+* Chat history export functionality
+
+The chatbot is designed as a **Career Advisor AI**, capable of structured, contextual, and intelligent responses.
+
+The system follows real-world AI engineering principles including:
+
+* Clean architecture
+* Secure API key handling
+* Modular code separation
+* Persistent memory
+* Production-grade password hashing
+* Deployment-ready configuration
+
+---
+
+# 🏗 System Architecture
 
 ```
-┌─────────────────┐    ┌──────────────────┐    ┌──────────────────┐
-│   Streamlit UI  │◄──►│   MLflow Server  │◄──►│  Model Registry  │
-│                 │    │  (localhost:5000)│    │                  │
-└─────────┬───────┘    └───────┬──────────┘    └─────────┬─────────┘
-          │                    │                         │
-          │                    │                         │
-          ▼                    ▼                         ▼
-┌─────────────────┐    ┌──────────────────┐    ┌──────────────────┐
-│   Prediction    │    │  Experiment      │    │   Registered     │
-│   Engine        │    │   Tracking       │    │   Models v1.0+   │
-└─────────────────┘    └──────────────────┘    └──────────────────┘
-          ▲
-          │
-┌─────────────────┐
-│  TF-IDF + RF    │
-│  (Cached)       │
-└─────────────────┘
-          ▲
-          │ 
-      datanew.csv
+User
+  ↓
+Streamlit UI
+  ↓
+Chat Service Layer
+  ↓
+Prompt Engineering Module
+  ↓
+LLM Handler (Euriai)
+  ↓
+Response Processing
+  ↓
+SQLite Database (Chat Memory)
+  ↓
+UI Rendering
 ```
 
-### System Components
-1. **Frontend**: Streamlit dashboard (4 tabs)
-2. **ML Pipeline**: TF-IDF → RandomForest (300 estimators)
-3. **Experiment Tracking**: MLflow tracking server
-4. **Model Registry**: MLflow Model Registry with tags
-5. **Data Layer**: CSV processing with imputation
+---
 
-### Data Flow
+# 🧩 High-Level Design (HLD)
+
+## 1️⃣ Frontend Layer
+
+* Built using Streamlit
+* Chat-style interface
+* Login/Register system
+* Chat history display
+* Chat history download (CSV)
+
+## 2️⃣ Backend Layer
+
+* Service-based architecture
+* LLM abstraction layer
+* Prompt management module
+* Database layer (SQLAlchemy ORM)
+* Authentication handler
+
+## 3️⃣ LLM Integration
+
+* EuriaiClient
+* Model: `gpt-4.1-nano`
+* Configurable temperature and token limits
+* Error handling with logging
+
+## 4️⃣ Database Layer
+
+SQLite Database (`chatbot.db`)
+
+Tables:
+
+* `users`
+* `chat_history`
+
+## 5️⃣ Security Layer
+
+* Argon2 password hashing
+* Environment-based API key storage
+* No hardcoded secrets
+* Modular authentication logic
+
+---
+
+# 🏗 Low-Level Design (LLD)
+
+## 📁 Project Structure
+
 ```
-Raw Reviews → Preprocessing → TF-IDF → RandomForest → Predictions
-              ↓
-         MLflow Logging (params/metrics/artifacts)
-              ↓
-         Model Registry (tagged versions)
+genai_chatbot/
+│
+├── app.py
+├── config.py
+├── requirements.txt
+├── .env
+│
+├── auth/
+│   └── auth_handler.py
+│
+├── database/
+│   ├── db.py
+│   └── models.py
+│
+├── memory/
+│   └── memory_manager.py
+│
+├── prompts/
+│   └── prompt_manager.py
+│
+├── llm/
+│   └── euriai_handler.py
+│
+├── services/
+│   └── chat_service.py
+│
+├── utils/
+│   └── logger.py
+│
+└── logs/
+    └── app.log
 ```
 
-## LLD (Low-Level Design)
+---
 
-### 1. Data Preprocessing Pipeline
-```mermaid
-graph TD
-    A[Raw Text] --> B[Lowercase + Remove Punctuation]
-    B --> C[Tokenization]
-    C --> D[Remove Stopwords + Lemmatization]
-    D --> E[TF-IDF Vectorization]
-    E --> F[Sparse Matrix 1200 features]
-```
+# 🔐 Authentication Flow
 
-**Parameters:**
-- `max_features=1200`
-- Stopwords: NLTK English
-- Lemmatization: WordNet
+1. User registers
+2. Password hashed using Argon2
+3. Stored in SQLite
+4. Login verifies hash
+5. Session stored in Streamlit session_state
 
-### 2. Model Architecture
-```
-RandomForestClassifier(
-    n_estimators=300,
-    random_state=42,
-    n_jobs=-1,
-    class_weight='balanced'
+Security Notes:
+
+* Argon2 chosen for modern password security
+* No 72-byte limitation (unlike bcrypt)
+* Follows OWASP best practices
+
+---
+
+# 🧠 Memory Management
+
+### Short-Term Memory
+
+* Session-based in Streamlit
+
+### Long-Term Memory
+
+* Persistent storage in SQLite
+* Chat history linked by `user_id`
+
+Each message stored with:
+
+* Role (user/assistant)
+* Message content
+
+---
+
+# 🎯 Prompt Engineering Strategy
+
+System prompt defines:
+
+* Role: Career Advisor AI
+* Structured output
+* Practical advice
+* No hallucinations
+* Actionable roadmap
+
+Prompts are modular and reusable via `prompt_manager.py`.
+
+---
+
+# ⚙️ LLM Integration
+
+## Euriai Client Configuration
+
+```python
+client = EuriaiClient(
+    api_key=Config.EURI_API_KEY,
+    model="gpt-4.1-nano"
 )
 ```
 
-### 3. MLflow Tracking Schema
-```yaml
-parameters:
-  max_features: 1200
-  n_estimators: 300
-  random_state: 42
-  
-metrics:
-  f1_score: 0.XXXX
-  train_accuracy: 0.XXXX
-  dataset_size: XXXXX
-  positive_ratio: 0.XX
-  
-tags:
-  model_type: RandomForest
-  task: sentiment-analysis
-  version: 1.0
-  
-artifacts:
-  - random_forest_model/
-  - tfidf_vectorizer/
-  - processed_dataset.csv
-```
+### Response Extraction
 
-### 4. Sentiment Classification Logic
 ```python
-def infer_sentiment(rating):
-    if rating >= 3.5: return 2  # Positive 😊
-    elif rating <= 2.5: return 0  # Negative ☹️
-    return 1  # Neutral 😐
+response["choices"][0]["message"]["content"]
 ```
 
-## 🚀 Quick Start
+### Error Handling
+
+* All errors logged in `logs/app.log`
+* Graceful fallback messages returned
+
+---
+
+# 🗄 Database Schema
+
+## Users Table
+
+| Column   | Type                 |
+| -------- | -------------------- |
+| id       | Integer (PK)         |
+| username | String (Unique)      |
+| password | String (Argon2 hash) |
+
+## Chat History Table
+
+| Column  | Type         |
+| ------- | ------------ |
+| id      | Integer (PK) |
+| user_id | Integer      |
+| role    | String       |
+| message | Text         |
+
+---
+
+# 🛠 Installation & Setup
+
+## 1️⃣ Clone Repository
 
 ```bash
-# 1. Clone & Install
-git clone <repo>
-cd ai-sentiment-mlflow
+git clone <repo_url>
+cd genai_chatbot
+```
+
+## 2️⃣ Create Virtual Environment
+
+```bash
+python -m venv .venv
+source .venv/bin/activate   # Mac/Linux
+.venv\Scripts\activate      # Windows
+```
+
+## 3️⃣ Install Dependencies
+
+```bash
 pip install -r requirements.txt
-
-# 2. Start MLflow (Terminal 1)
-mlflow ui --host 0.0.0.0 --port 5000
-
-# 3. Start Streamlit (Terminal 2)
-streamlit run app.py --server.port 8501
 ```
 
-**Access:**
-- Streamlit: http://localhost:8501
-- MLflow UI: http://localhost:5000
+## 4️⃣ Setup Environment Variables
 
-## 🏗️ Architecture
+Create `.env`:
 
 ```
-12_Task_MlFlow/
-├── app.py                 # Main Streamlit application
-├── datanew.csv           # Dataset (~1000+ reviews)
-├── requirements.txt      # Dependencies
-├── README.md            # This file
-├── models/              # MLflow model registry (auto-generated)
-├── mlruns/              # MLflow experiments (auto-generated)
-└── .streamlit/          # Streamlit config
+EURI_API_KEY=your_api_key_here
+DATABASE_URL=sqlite:///chatbot.db
+SECRET_KEY=your_secret_key
 ```
 
-## 🔗 MLflow Integration
-
-### 1. **Experiment Tracking**
-```
-Sentiment-Analysis-v1/
-├── Run: RF-Sentiment-v1 (F1: 0.8472)
-├── Run: RF-Sentiment-v1-2 (F1: 0.8521) ← Best
-└── Artifacts: model, vectorizer, dataset
-```
-
-### 2. **Hyperparameter Tuning**
-```
-Hyperparam-Tuning-v1/
-├── RF-n100-d10 (F1: 0.8234)
-├── RF-n100-dNone (F1: 0.8412)
-├── RF-n300-d10 (F1: 0.8376)
-└── RF-n300-dNone (F1: 0.8521) ← Best
-```
-
-### 3. **Model Registry**
-```
-SentimentRFModel/
-├── Version 1 (F1: 0.8472)
-│   tags:
-│   - production_ready: true
-│   - sentiment_type: 3-class
-│   - f1_score: 0.8472
-└── Version 2 (F1: 0.8521) ← Latest/Production
-```
-
-**MLflow UI Plots (Auto-generated):**
-- Line plots: F1 score over runs
-- Parallel coordinates: Hyperparameter optimization
-- Feature importance charts
-- Confusion matrices
-
-## 🌐 API Endpoints (Model Registry)
+## 5️⃣ Run Application
 
 ```bash
-# Load registered model for inference
-mlflow models serve -m "models:/SentimentRFModel/2" -p 1234
-
-# Test prediction
-curl -X POST -H "Content-Type:application/json" \
-  --data '{"inputs": ["Great product! Love it."]}' \
-  http://localhost:1234/invocations
+streamlit run app.py
 ```
 
-## ⚙️ Configuration
+---
 
-**.streamlit/config.toml**
-```toml
-[server]
-port = 8501
-enableCORS = false
-enableXsrfProtection = false
+# ☁️ AWS EC2 Deployment
 
-[theme]
-primaryColor = "#FF4B4B"
-backgroundColor = "#FFFFFF"
-secondaryBackgroundColor = "#F0F2F6"
-textColor = "#262730"
-```
+## 1️⃣ Launch EC2 (Ubuntu)
 
-**MLflow Config** (auto-detected):
-```
-tracking_uri: http://localhost:5000
-experiments:
-  - Sentiment-Analysis-v1
-  - Hyperparam-Tuning-v1
-```
-
-## 📊 Performance
-
-| Metric | Value | Notes |
-|--------|-------|-------|
-| Training F1 | 0.84-0.87 | 3-class sentiment |
-| Prediction Latency | <50ms | Cached TF-IDF |
-| Memory Usage | ~250MB | 1200 features |
-| Throughput | 100+ req/s | Batch processing |
-| UI Load Time | <2s | Cached models |
-
-**Scalability:**
-- Horizontal: Multiple Streamlit instances
-- Model Serving: MLflow + FastAPI
-- Data: Add PostgreSQL backend
-
-## 🧪 Testing
+## 2️⃣ Install Python & pip
 
 ```bash
-# Unit tests
-pytest tests/
-
-# Load testing
-locust -f locustfile.py
-
-# Model validation
-mlflow models validate -m models:/SentimentRFModel/2
+sudo apt update
+sudo apt install python3-pip
 ```
 
-## 🔧 Troubleshooting
+## 3️⃣ Clone Repository
 
-| Issue | Solution |
-|-------|----------|
-| `list_experiments()` error | Use `client.search_experiments()` |
-| `use_container_width` warning | Update to `width='stretch'` |
-| MLflow connection failed | `mlflow ui --host 0.0.0.0` |
-| NLTK download fails | `@st.cache_resource` + `quiet=True` |
-| Model not loading | Check `st.session_state` |
+## 4️⃣ Install Requirements
 
-## 📈 Deployment
-
-**Docker Compose:**
-```yaml
-version: '3.8'
-services:
-  mlflow:
-    image: python:3.11
-    command: mlflow ui --host 0.0.0.0
-    ports:
-      - "5000:5000"
-  streamlit:
-    build: .
-    ports:
-      - "8501:8501"
-    depends_on:
-      - mlflow
+```bash
+pip install -r requirements.txt
 ```
 
-**Cloud Options:**
-= Streamlit
-- AWS SageMaker + MLflow
-- GCP Vertex AI
-- Azure ML
+## 5️⃣ Run Streamlit
+
+```bash
+streamlit run app.py --server.port 8501 --server.address 0.0.0.0
+```
+
+## 6️⃣ Configure Security Group
+
+Allow inbound port:
+
+```
+8501
+```
+
+Access:
+
+```
+http://<EC2_PUBLIC_IP>:8501
+```
+
+---
+
+# 📊 Logging & Monitoring
+
+All errors and system logs stored in:
+
+```
+logs/app.log
+```
+
+Logged Events:
+
+* LLM errors
+* API failures
+* System exceptions
+
+---
+
+# 📥 Chat History Download
+
+Users can download conversation history as CSV:
+
+* Role
+* Message
+* Timestamp (if added later)
+
+---
+
+# 🔒 Security Considerations
+
+* API keys stored in `.env`
+* No credentials hardcoded
+* Password hashing via Argon2
+* Modular authentication logic
+* Production-ready structure
+
+---
+
+# 🚀 Future Enhancements
+
+* JWT authentication
+* Redis session management
+* PostgreSQL upgrade
+* Token usage tracking per user
+* Role-based access (Admin/User)
+* Docker containerization
+* CI/CD pipeline
+* Vector database (RAG)
+* Rate limiting
+
+---
+
+# 📈 Production Readiness Checklist
+
+| Feature               | Status |
+| --------------------- | ------ |
+| Authentication        | ✅      |
+| Secure Hashing        | ✅      |
+| Environment Variables | ✅      |
+| Modular Code          | ✅      |
+| Error Handling        | ✅      |
+| Logging               | ✅      |
+| Persistent Memory     | ✅      |
+| Download History      | ✅      |
+| Cloud Deployable      | ✅      |
+
+---
+
+# 🎓 Interview Explanation Summary
+
+This project demonstrates:
+
+* End-to-end AI system design
+* Clean architecture principles
+* Secure authentication
+* Persistent conversation memory
+* LLM API integration
+* Cloud deployment capability
+* Production-grade error handling
+
+---
+
+# 👨‍💻 Tech Stack
+
+* Python
+* Streamlit
+* Euriai LLM API
+* SQLAlchemy
+* SQLite
+* Argon2
+* dotenv
+
+---
